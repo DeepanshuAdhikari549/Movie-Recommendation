@@ -17,7 +17,7 @@ export default function App() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:3000/recommend", {
+      const res = await fetch("http://movie-recommend-backend.onrender.com/recommend", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
