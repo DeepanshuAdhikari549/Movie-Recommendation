@@ -17,13 +17,19 @@ export default function App() {
     setError("");
 
     try {
-      const res = await fetch("http://movie-recommend-backend.onrender.com/recommend", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userInput: input }),
-      });
+      const res = await fetch(
+  "https://movie-recommendation-pyuc.onrender.com/recommend",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      userInput: input,
+    }),
+  }
+);
+
 
 
       if (!res.ok) {
