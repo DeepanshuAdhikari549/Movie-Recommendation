@@ -1,86 +1,75 @@
 import { useState } from "react";
+import "./App.css";
 
-export default function App() {
+function App() {
   const [input, setInput] = useState("");
-  const [movies, setMovies] = useState("");
+  const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const getMovies = async () => {
+  const getRecommendations = async () => {
     if (!input.trim()) {
-      alert("Please enter something");
+      alert("Please enter movie preference");
       return;
     }
 
     setLoading(true);
-    setMovies("");
     setError("");
+    setResult("");
 
     try {
-      const res = await fetch(
-  "https://movie-recommendation-pyuc.onrender.com/recommend",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      userInput: input,
-    }),
-  }
-);
+      const response = await fetch(
+        "https://movie-recommendation-pyuc.onrender.com/recommend",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userInput: input,
+          }),
+        }
+      );
 
-
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(errText);
+      if (!response.ok) {
+        throw new Error("Backend error");
       }
 
-      const data = await res.json();
-      console.log("Frontend received:", data);
-
-      if (data.recommendations) {
-        setMovies(data.recommendations);
-      } else {
-        setError("No recommendations received");
-      }
-    } catch (err) {
-      console.error("Frontend error:", err);
-      setError("Backend error. Check server console.");
+      const data = await response.json();
+      setResult(data.recommendations);
+    } catch {
+      setError(
+        "Backend is waking up (Render free tier). Please wait 30–60 seconds and try again."
+      );
     } finally {
-     
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: 40, fontFamily: "Arial" }}>
+    <div className="app">
       <h1>🎬 Movie Recommendation AI</h1>
 
       <textarea
-        rows={4}
-        style={{ width: "100%", padding: 10 }}
-        placeholder="e.g. action movies with strong female lead"
+        placeholder="Enter your movie preference (e.g. action indian)"
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
 
-      <br /><br />
-
-      <button onClick={getMovies} disabled={loading}>
+      <button onClick={getRecommendations} disabled={loading}>
         {loading ? "Loading..." : "Get Recommendations"}
       </button>
 
-      <br /><br />
+      {error && <p className="error">{error}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {movies && (
-        <pre style={{ background: "#f4f4f4", padding: 15 }}>
-          {movies}
-        </pre>
+      {result && (
+        <div className="result">
+          <h3>Recommended Movies:</h3>
+          <pre>{result}</pre>
+        </div>
       )}
     </div>
   );
 }
+
+export default App;
