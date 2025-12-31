@@ -42,15 +42,13 @@ npm install
 npm run dev
 
 🌐 Live Links
-
 GitHub Repository:
 https://github.com/DeepanshuAdhikari549/Movie-Recommendation
 
 Frontend (Vercel):
-https://movie-recommendation-oxih.vercel.app
-
+https://movie-recommendation-nine-phi.vercel.app
 Backend (Render):
-https://<your-backend-name>.onrender.com
+https://movie-recommendation-pyuc.onrender.com
 
 
 Deepanshu Adhikari
