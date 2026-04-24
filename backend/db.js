@@ -11,7 +11,7 @@ await db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_input TEXT,
     recommended_movies TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `);
 

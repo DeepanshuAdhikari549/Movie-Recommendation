@@ -18,18 +18,20 @@ function App() {
     setResult("");
 
     try {
-      const response = await fetch(
-        "https://movie-recommendation-pyuc.onrender.com/recommend",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userInput: input,
-          }),
-        }
-      );
+      // Use local backend URL for testing, or deploy URL if needed.
+      const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000/recommend" 
+        : "https://movie-recommendation-pyuc.onrender.com/recommend";
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userInput: input,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Backend error");
@@ -39,7 +41,7 @@ function App() {
       setResult(data.recommendations);
     } catch {
       setError(
-        "Backend is waking up (Render free tier). Please wait 30–60 seconds and try again."
+        "Failed to fetch recommendations. The backend might be starting up or unreachable."
       );
     } finally {
       setLoading(false);
@@ -47,27 +49,46 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <h1>🎬 Movie Recommendation AI</h1>
+    <div className="layout-wrapper">
+      <div className="glow-effect"></div>
+      <main className="main-content">
+        <header className="header">
+          <div className="badge">AI-Powered</div>
+          <h1>Find Your Next Movie</h1>
+          <p>Describe your mood, genre, or favorite actors, and our engine will curate the perfect watchlist.</p>
+        </header>
 
-      <textarea
-        placeholder="Enter your movie preference (e.g. action indian)"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
+        <section className="form-section">
+          <textarea
+            className="text-input"
+            placeholder="e.g., A psychological thriller with a plot twist..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
 
-      <button onClick={getRecommendations} disabled={loading}>
-        {loading ? "Loading..." : "Get Recommendations"}
-      </button>
+          <button 
+            className="submit-button"
+            onClick={getRecommendations} 
+            disabled={loading}
+          >
+            {loading ? "Analyzing preferences..." : "Generate Recommendations"}
+          </button>
+        </section>
 
-      {error && <p className="error">{error}</p>}
+        {error && <div className="error-message">{error}</div>}
 
-      {result && (
-        <div className="result">
-          <h3>Recommended Movies:</h3>
-          <pre>{result}</pre>
-        </div>
-      )}
+        {result && (
+          <section className="result-section">
+            <h2 className="result-title">Curated For You</h2>
+            <div className="result-text">
+              {result.split('\n').map((line, idx) => {
+                if (!line.trim()) return null;
+                return <p key={idx} className="result-item">{line}</p>;
+              })}
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }

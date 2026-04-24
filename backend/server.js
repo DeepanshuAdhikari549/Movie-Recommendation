@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import db from "./db.js";
+import { search } from "duck-duck-scrape";
 
 dotenv.config();
 
@@ -27,12 +29,29 @@ fastify.post("/recommend", async (request, reply) => {
       });
     }
 
+    let webContext = "";
+    try {
+      const searchResult = await search(`upcoming movies ${userInput} 2026`);
+      if (searchResult && searchResult.results) {
+        webContext = searchResult.results
+          .slice(0, 4)
+          .map((r) => r.title + " - " + r.description)
+          .join("\n");
+      }
+    } catch (e) {
+      console.error("Search failed:", e);
+    }
+
     const completion = await client.chat.completions.create({
-      model: "llama-3.1-8b-instant", 
+      model: "llama-3.3-70b-versatile",
       messages: [
         {
+          role: "system",
+          content: "You are a movie recommendation engine. The current year is 2026. Use the provided internet context to recommend the most recent or upcoming movies. Only list movie names."
+        },
+        {
           role: "user",
-          content: `Recommend 5 movies based on this preference: ${userInput}. Only list movie names.`,
+          content: `Preference: ${userInput}.\n\nInternet Context:\n${webContext}\n\nRecommend 5 movies based on this. Only list movie names.`,
         },
       ],
     });
@@ -40,6 +59,16 @@ fastify.post("/recommend", async (request, reply) => {
     const text =
       completion?.choices?.[0]?.message?.content ||
       "AI did not return output.";
+
+    try {
+      await db.run(
+        `INSERT INTO recommendations (user_input, recommended_movies) VALUES (?, ?)`,
+        [userInput, text]
+      );
+      console.log("Saved recommendation to DB");
+    } catch (dbError) {
+      console.error("Database error:", dbError);
+    }
 
     return reply.send({ recommendations: text });
   } catch (error) {
