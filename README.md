@@ -25,7 +25,7 @@ Backend: Render
 
 🤖 How It Works
 User enters a movie preference (example: romantic movies).
-Frontend sends the input to the backend.
+Frontend sends the input to the backend.   
 Backend sends the input to an AI model.
 AI processes the input and returns movie recommendations.
 Recommendations are displayed on the frontend.
