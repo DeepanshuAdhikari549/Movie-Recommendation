@@ -11,7 +11,7 @@ const fastify = Fastify({ logger: true });
 
 await fastify.register(cors, { origin: "*" });
 const client = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY || "dummy_key_to_prevent_crash",
   baseURL: "https://api.groq.com/openai/v1",
 });
 fastify.get("/", async () => {
@@ -81,6 +81,15 @@ fastify.post("/recommend", async (request, reply) => {
   }
 });
 
-fastify.listen({ port: 3000, host: "0.0.0.0" }, () => {
-  console.log("Server running on http://localhost:3000");
-});
+const startServer = async () => {
+  try {
+    const port = process.env.PORT || 3000;
+    await fastify.listen({ port: port, host: "0.0.0.0" });
+    console.log(`Server running on http://localhost:${port}`);
+  } catch (err) {
+    console.error("Failed to start server:", err);
+    process.exit(1);
+  }
+};
+
+startServer();
