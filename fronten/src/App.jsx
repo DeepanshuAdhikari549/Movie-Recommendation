@@ -93,7 +93,7 @@ function App() {
       <div className="layout-wrapper">
         <main className="main-content">
           <header className="header">
-            <h1>Cinematic Discovery</h1>
+            <h1>Movie Recommendation</h1>
             <p>Experience the next generation of AI-curated entertainment. Describe your vibe, and let our intelligence find your perfect match.</p>
           </header>
 
