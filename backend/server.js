@@ -47,7 +47,7 @@ fastify.post("/recommend", async (request, reply) => {
       messages: [
         {
           role: "system",
-          content: "You are a movie recommendation engine. The current year is 2026. Use the provided internet context to recommend the most recent or upcoming movies. Only list movie names."
+          content: "You are an expert movie recommendation engine. The current year is 2026. Use the provided internet context to recommend the most recent or upcoming movies. Format your response STRICTLY as a list where each line is formatted exactly as 'Movie Name - A short, compelling description'. Do not include intro or outro text."
         },
         {
           role: "user",
