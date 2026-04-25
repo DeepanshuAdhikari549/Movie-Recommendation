@@ -93,10 +93,6 @@ function App() {
       <div className="layout-wrapper">
         <main className="main-content">
           <header className="header">
-            <div className="badge">
-              <span className="badge-dot"></span>
-              Pulse Engine 2.0
-            </div>
             <h1>Cinematic Discovery</h1>
             <p>Experience the next generation of AI-curated entertainment. Describe your vibe, and let our intelligence find your perfect match.</p>
           </header>
